@@ -4,13 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.io.Serial;
 import java.io.Serializable;
 
 @Entity(name="users")
 public class UserEntity implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,8 +32,8 @@ public class UserEntity implements Serializable {
 
     private String emailVerificationToken;
 
-    @Column(nullable = false, columnDefinition = "boolean dafault false")
-    private String emailVerificationStatus;
+    @Column(nullable = false)
+    private Boolean emailVerificationStatus = false;
 
     public Long getId() {
         return id;
@@ -93,11 +91,11 @@ public class UserEntity implements Serializable {
         this.emailVerificationToken = emailVerificationToken;
     }
 
-    public String getEmailVerificationStatus() {
+    public Boolean getEmailVerificationStatus() {
         return emailVerificationStatus;
     }
 
-    public void setEmailVerificationStatus(String emailVerificationStatus) {
+    public void setEmailVerificationStatus(Boolean emailVerificationStatus) {
         this.emailVerificationStatus = emailVerificationStatus;
     }
 }
