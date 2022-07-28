@@ -1,6 +1,6 @@
 package com.cbcode.crudrest.service.impl;
 
-import com.cbcode.crudrest.UserRepositoy;
+import com.cbcode.crudrest.io.repository.UserRepositoy;
 import com.cbcode.crudrest.io.entity.UserEntity;
 import com.cbcode.crudrest.service.UserService;
 import com.cbcode.crudrest.shared.Utils;
@@ -44,6 +44,29 @@ public class userServiceImpl implements UserService {
 
         UserDto returnValue = new UserDto();
         BeanUtils.copyProperties(storedUserDetails, returnValue);
+
+        return returnValue;
+    }
+
+    @Override
+    public UserDto getUser(String email) {
+        UserEntity userEntity = userRepositoy.findByEmail(email);
+
+        if (userEntity == null) throw new UsernameNotFoundException(email);
+
+        UserDto returnValue = new UserDto();
+        BeanUtils.copyProperties(userEntity, returnValue);
+        return returnValue;
+    }
+
+    @Override
+    public UserDto getUserByUserId(String userId) {
+        UserDto returnValue = new UserDto();
+        UserEntity userEntity = userRepositoy.findByUserId(userId);
+
+        if (userEntity == null) throw new UsernameNotFoundException(userId);
+
+        BeanUtils.copyProperties(userEntity, returnValue);
 
         return returnValue;
     }

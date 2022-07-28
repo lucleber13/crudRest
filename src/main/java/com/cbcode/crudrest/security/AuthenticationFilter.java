@@ -1,5 +1,8 @@
 package com.cbcode.crudrest.security;
 
+import com.cbcode.crudrest.SpringApplicationContext;
+import com.cbcode.crudrest.service.UserService;
+import com.cbcode.crudrest.shared.dto.UserDto;
 import com.cbcode.crudrest.ui.model.request.UserLoginRequestModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
@@ -21,7 +24,7 @@ import java.util.Date;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-    private String contentType;
+    //private String contentType;
 
     public AuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -32,7 +35,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
 
-            contentType = request.getHeader("Accept");
+            //contentType = request.getHeader("Accept");
 
             UserLoginRequestModel creds = new ObjectMapper()
                     .readValue(request.getInputStream(), UserLoginRequestModel.class);
@@ -60,8 +63,13 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String token = Jwts.builder()
                 .setSubject(username)
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.ES512, SecurityConstants.TOKEN_SECRET)
+                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret())
                 .compact();
+
+        UserService userService = (UserService)SpringApplicationContext.getBean("userServiceImpl");
+        UserDto userDto = userService.getUser(username);
+
         response.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants. TOKEN_PREFIX + token);
+        response.addHeader("UserID", userDto.getUserId());
     }
 }
